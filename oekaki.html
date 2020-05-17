@@ -32,8 +32,10 @@
 //お絵かきアプリの基本形です。
 //このアプリは課題が残されています
 //1.描画したままcanvasの枠を超えると戻った時にクリックしていなくても線の描画が始まる(canvas領域からmouseoutしたらfalseにするという処理)
-//2.色の変更(input type=color)を使う、太さの変更ができない
+//2.色の変更(input type=color)を使う、太さ(input type=rangeを使う）の変更ができない
+//3.LocalStorage保存と読み込み（toDataURLで調べる）localstrageに入れた絵はimgタグに入れることで呼び出せる
 //上記1,2を最低修正する
+
 
 //初期化（変数letで宣言）
 let canvas_mouse_event = false;//スイッチの役割（最初をfalseにしてマウスダウンされたらtrueに変えることで線を引く処理をクリックしていなければ中止し、クリックしていると始めるといった記述ができる。[true=線を引く、 false=線は引かない]
@@ -77,6 +79,9 @@ $(can).on('mousemove',function(e){
    ctx.stroke();//描画実行
    oldX = px;//開始地点の入れ替えをしている
    oldY = py;//開始地点の入れ替えをしている
+   if(oldY < 0 || oldY > can.height ||oldX < 0 || oldX > can.width){
+     canvas_mouse_event == false;
+   };
   };
 });
 
