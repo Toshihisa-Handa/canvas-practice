@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>線を引く</title>
+</head>
+<body>
+  <h1>線を引く</h1>
+<canvas id='canvas' width="500" height="300"></canvas>
+
+
+
+
+
+
+
+  <!-- jquery を先に読み込む（先に読み込まないと使えません！） -->
+  <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+  <!-- jqueryのファイルはこの下（↓）に記述して次に読み込む -->
+<script>
+      //キャンパス使用のおまじない--------
+const canvas = $('#canvas')[0];
+const ctx = canvas.getContext('2d');
+//------------------------------------
+
+
+ctx.strokeStyle = '#000';//色指定
+ctx.lineWidth =10;//太さ指定
+ctx.lineCap = 'round'//round=丸い、square=四角い(線の先が丸か四角か選べる)
+ctx.beginPath();//パスの開始（初期化）
+ctx.moveTo(20,0)//始点（x20,y0)の場所から線を引き始め
+ctx.lineTo(100,100)//終点(x100,y0)まで線を引く
+ctx.stroke();//描画
+ctx.closePath();//パスを閉じる（なくても動くが念のための記述）
+</script>
+
+</body>
+</html>

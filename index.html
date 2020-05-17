@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>canvas</title>
+  <!-- <link rel="stylesheet" href="css/reset.css"> -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<h1>canvasnの練習</h1>
+
+<canvas id='canvas' width="500" height="300"></canvas>
+
+
+
+
+
+
+
+  
+
+  <!-- jquery を先に読み込む（先に読み込まないと使えません！） -->
+  <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+  <!-- jqueryのファイルはこの下（↓）に記述して次に読み込む -->
+
+
+<!-- js/main.jsを後に読み込む -->
+  <script>
+    //キャンパス使用のおまじない--------
+const canvas = $('#canvas')[0];
+const ctx = canvas.getContext('2d');
+//------------------------------------
+
+//テキスト描画
+ctx.fillStyle = '#ff0000';//カラー指定
+ctx.font = '20px_sans';//fontサイズ、書式
+ctx.textBaseline = 'top'//top, middle,bottom(文字の設置位置)
+ctx.fillText('hello world', 100, 100)
+
+
+
+//四角描画
+ctx.beginPath();//おまじない。初期化。他の処理があっても影響を受けないようにする
+ctx.fillStyle ='#ff0000'
+ctx.rect(50,10,60,60);
+ctx.stroke();//これで描画する
+ctx.fill();//strokeのしたに書く
+
+//円描画
+ctx.beginPath();//おまじない。初期化。他の処理があっても影響を受けないようにする
+ctx.fillStyle ='blue';//色指定
+//線の太さ
+ctx.lineWidth= 50;
+ctx.strokeStyle ='gray'
+
+ctx.arc(250,100,50,0,Math.PI*2, false)//円の描画設定左からx軸y軸（この指定が円の中心の位置になる）,0度から描画,Math.PIは180度のこと、これに２をかけて円にしている、true or false描画の方向を指定）
+
+ctx.stroke();//線の実行
+ctx.fill();//円の実行
+  </script>
+</body>
+</html>
