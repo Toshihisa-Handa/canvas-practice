@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>お絵かき</title>
+</head>
+<style>
+  .thum{
+    border:2px solid #999;
+    margin-right: 5px;
+  }
+</style>
+<body>
+  <h1>お絵かき</h1>
+  <nav>
+    
+    <!-- 線の色を変更するHTML要素 -->
+    <p>
+      <input type="color" value='#000000' id='penColor'>
+    </p>
+    <!-- アナログなやり方↓ -->
+    <!-- <p>
+      <select id="penColor">
+        <option value="black">黒</option>
+        <option value="red">赤</option>
+        <option value="blue">青</option>
+        <option value="white">消しゴム</option>
+      </select>
+    </p> -->
+
+    <!-- 線の太さを変更するHTML要素 -->
+    <p>
+      <input type="range" max='50' min='1' value='20' id='penWidth'>
+    </p>
+    <!-- アナログなやり方↓ -->
+    <!-- <p>
+      <select id="penWidth">
+        <option value="1">細</option>
+        <option value="3">中</option>
+        <option value="5">太い</option>
+      </select>
+    </p> -->
+
+    <button id='clear_btn'>クリアー</button>
+  <input type="button" id='save' value='ギャラリーに追加'>
+  </nav>
+<canvas id='drowarea' width="500" height="500" style='border:1px solid blue;'></canvas>
+
+<div class="gallery"></div>
+<!-- ↑ここの中にimgタグclass='thumを入れていく -->
+
+
+
+
+
+
+  <!-- jquery を先に読み込む（先に読み込まないと使えません！） -->
+  <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+  <!-- jqueryのファイルはこの下（↓）に記述して次に読み込む -->
+<script>
+//お絵かきアプリの基本形です。
+//このアプリは課題が残されています
+//1.描画したままcanvasの枠を超えると戻った時にクリックしていなくても線の描画が始まる(canvas領域からmouseoutしたらfalseにするという処理)
+//2.色の変更(input type=color)を使う、太さ(input type=rangeを使う）の変更ができない
+//3.LocalStorage保存と読み込み（toDataURLで調べる）localstrageに入れた絵はimgタグに入れることで呼び出せる
+//上記1,2を最低修正する
+
+
+//初期化（変数letで宣言）
+let canvas_mouse_event = false;//スイッチの役割（最初をfalseにしてマウスダウンされたらtrueに変えることで線を引く処理をクリックしていなければ中止し、クリックしていると始めるといった記述ができる。[true=線を引く、 false=線は引かない]
+let oldX = 0;//1つ前の座標を代入する為の変数（スタート地点のx座標）
+let oldY = 0;//1つ前の座標を代入する為の変数（スタート地点のy座標）
+let bold_line =30;//ラインの太さをここで指定(ここの数値をいじることで太さを変更する機能をつけられる）
+let color = '#000000';//ラインの色をここで指定（ここの数値をいじることで色を変更する機能をつけられる）
+
+
+//お絵かきアプリは3つのイベントからなる
+//1.mousedown / 2.mousemove / 3.mouseup
+
+
+//キャンパス使用のおまじない--------
+const can = $('#drowarea')[0];
+const ctx = can.getContext('2d');
+//------------------------------------
+
+// let color = document.querySelector('#color').value;
+
+
+//1.mousedown
+$(can).on('mousedown',function(e){
+  oldY = e.offsetY;//offsetX,Yはその要素の中の位置を表す。
+  oldX = e.offsetX;//pageX,Yはそのページ全体での位置を表す。
+  canvas_mouse_event = true;//描画開始のスイッチを入れる役割。
+  console.log(e);
+  console.log(oldX);
+  console.log(oldY);
+})
+
+//2.mousemove
+$(can).on('mousemove',function(e){ 
+  if(canvas_mouse_event==true){//この記述によって、スイッチを押している時だけ、イベントを着火できる。
+   const px = e.offsetX;
+   const py = e.offsetY;
+   ctx.strokeStyle = color;//色
+   ctx.lineWidth = bold_line;//太さ
+   ctx.lineJoin = 'round';//lineJoinと下のlineCapを書くことで太字にしても線画滑らかになるようにしている
+   ctx.lineCap = 'round';//
+   ctx.beginPath();//初期化
+   ctx.moveTo(oldX,oldY);//描画の始点
+   ctx.lineTo(px,py);//描画の終点
+   ctx.stroke();//描画実行
+   oldX = px;//開始地点の入れ替えをしている
+   oldY = py;//開始地点の入れ替えをしている
+   console.log(oldX);
+   console.log(oldY);
+  };
+});
+
+
+
+
+//3.mouseup
+$(can).on('mouseup',function(){ 
+  canvas_mouse_event =false;
+});
+
+//4.mouseleave(マウスが枠から離れた時に実行する記述)
+$(can).on('mouseleave',function(){ 
+  canvas_mouse_event =false;
+});
+
+
+//clear_btn（クリアボタン）
+$('#clear_btn').on('click',function(){
+  ctx.beginPath();//初期化
+  ctx.clearRect(0, 0, can.width, can.height);//クリアレクトは四角の範囲内の描画を削除するメソッド
+                                             //can.width,heightでキャンパス内のwidthとheigtを指定している。
+                                             //今回ならば500,500でも可能だが、canvasの値が増減したときの柔軟性を
+                                             //この記述で持たせている                                           
+});
+
+
+//ペンの色の変更
+$('#penColor').change(function(){
+  color = $(this).val();
+});
+//ペンの太さの変更
+$('#penWidth').change(function(){
+  bold_line = $(this).val();
+});
+
+
+// //保存ボタンの設定(imgタグとaタグを生成しダウンロードを可能にしている)
+let canvas = document.querySelector('#drowarea');
+let gallery = document.querySelector('.gallery');
+let save = document.querySelector('#save');
+save.onclick = function(){
+ let dataURL = canvas.toDataURL();//引数なしはpng,jpegの場合、引数をtoDataURL( "image/jpeg", 0.75 )とする（第二引数は品質）。
+ let img = document.createElement('img');
+ img.style.width='90px';
+ img.style.height='100px';
+ img.src= dataURL;
+ img.className = 'thum';
+ console.log(img);
+let a = document.createElement('a');
+    a.href=`${dataURL}`.replace('image/png', 'application/octet-stream');
+    a.download= new Date().getTime()+'.png';
+ gallery.appendChild(a);
+ a.appendChild(img);
+ ctx.clearRect(0, 0, can.width, can.height);
+};
+
+</script>
+
+</body>
+</html>
